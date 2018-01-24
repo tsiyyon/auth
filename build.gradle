@@ -1,3 +1,12 @@
+plugins {
+    id "java"
+    id "idea"
+    id "maven"
+}
+
+group = 'com.tsiyyon'
+version = '0.0.1'
+
 ext {
     hk2_api = '2.4.0-b09'
     jaxrs = '2.0.1'
@@ -10,9 +19,6 @@ ext {
     mybatis_guice = '3.7'
     guice_bridge = '2.4.0-b09'
 }
-
-apply plugin: 'java'
-apply plugin: 'idea'
 
 repositories {
     jcenter()
@@ -33,4 +39,12 @@ dependencies {
 
     testCompile "org.glassfish.jersey.test-framework:jersey-test-framework-core:$jersey"
     testCompile "org.glassfish.jersey.test-framework.providers:jersey-test-framework-provider-grizzly2:$jersey"
+}
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            repository(url: mavenCentral().url)
+        }
+    }
 }
