@@ -1,23 +1,19 @@
-package com.tsiyyon.auth;
+package me.tzion.auth;
 
 import org.glassfish.jersey.server.ContainerRequest;
 import org.glassfish.jersey.server.internal.inject.AbstractContainerRequestValueFactory;
 
-public class PrincipalContainerRequestValueFactory<T> extends AbstractContainerRequestValueFactory<T> {
+import java.util.Optional;
+
+public class OptionalContainerRequestValueFactory<T> extends AbstractContainerRequestValueFactory<Optional<T>> {
     private Class<T> principalClass;
-    public PrincipalContainerRequestValueFactory(AuthValueFactoryProvider.PrincipalClassProvider principalClass) {
+    public OptionalContainerRequestValueFactory(AuthValueFactoryProvider.PrincipalClassProvider principalClass) {
         this.principalClass = principalClass.getClazz();
     }
-
     @Override
-    public T provide() {
+    public Optional<T> provide() {
         ContainerRequest containerRequest = getContainerRequest();
         Object current = containerRequest.getProperty("__current__");
-        return principalClass.cast(current);
-    }
-
-    @Override
-    public void dispose(T instance) {
-
+        return Optional.ofNullable(principalClass.cast(current));
     }
 }

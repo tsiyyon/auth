@@ -1,4 +1,4 @@
-package com.tsiyyon.auth;
+package me.tzion.auth;
 
 import org.glassfish.hk2.api.Factory;
 import org.glassfish.hk2.api.InjectionResolver;

@@ -1,4 +1,4 @@
-package com.tsiyyon.auth;
+package me.tzion.auth;
 
 import java.util.Optional;
 

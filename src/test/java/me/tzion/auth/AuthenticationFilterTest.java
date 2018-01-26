@@ -1,7 +1,7 @@
-package com.tsiyyon.auth;
+package me.tzion.auth;
 
-import com.tsiyyon.auth.support.Resources;
-import com.tsiyyon.auth.support.User;
+import me.tzion.auth.support.Resources;
+import me.tzion.auth.support.User;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.filter.LoggingFilter;
 import org.glassfish.jersey.server.ResourceConfig;

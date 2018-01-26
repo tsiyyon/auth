@@ -1,4 +1,4 @@
-package com.tsiyyon.auth.support;
+package me.tzion.auth.support;
 
 public class User {
     private String name;

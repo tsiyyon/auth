@@ -1,6 +1,6 @@
-package com.tsiyyon.auth.support;
+package me.tzion.auth.support;
 
-import com.tsiyyon.auth.Auth;
+import me.tzion.auth.Auth;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;

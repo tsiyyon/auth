@@ -1,4 +1,4 @@
-package com.tsiyyon.auth;
+package me.tzion.auth;
 
 import org.glassfish.jersey.server.model.AnnotatedMethod;
 

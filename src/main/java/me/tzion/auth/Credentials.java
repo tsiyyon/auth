@@ -1,4 +1,4 @@
-package com.tsiyyon.auth;
+package me.tzion.auth;
 
 import javax.ws.rs.container.ContainerRequestContext;
 import java.util.Optional;
