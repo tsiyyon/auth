@@ -1,4 +1,4 @@
-# The jersey auth module
+# The jersey identity module
 ### usage as following
 ```
 @Path("/")
@@ -6,14 +6,14 @@ public class Resources {
     @GET
     @Path("required")
     public Response required(
-            @Auth User user) {
+            @Current User user) {
         return Response.ok().build();
     }
 
     @GET
     @Path("optional")
     public Response optional(
-            @Auth Optional<User> user) {
+            @Current Optional<User> user) {
         return user.map(u -> Response.ok(u.getName()).build())
                 .orElse(Response.ok("anonymous").build());
     }

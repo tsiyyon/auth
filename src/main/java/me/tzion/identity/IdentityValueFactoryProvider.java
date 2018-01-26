@@ -1,4 +1,4 @@
-package me.tzion.auth;
+package me.tzion.identity;
 
 import org.glassfish.hk2.api.Factory;
 import org.glassfish.hk2.api.InjectionResolver;
@@ -17,14 +17,14 @@ import java.lang.reflect.ParameterizedType;
 import java.util.Optional;
 
 @Singleton
-public class AuthValueFactoryProvider<T> extends AbstractValueFactoryProvider {
+public class IdentityValueFactoryProvider<T> extends AbstractValueFactoryProvider {
     private final PrincipalClassProvider<T> cl;
     private Class<T> principalClass;
 
     @Inject
-    protected AuthValueFactoryProvider(MultivaluedParameterExtractorProvider mpep,
-                                       ServiceLocator locator,
-                                       PrincipalClassProvider<T> principalClass) {
+    protected IdentityValueFactoryProvider(MultivaluedParameterExtractorProvider mpep,
+                                           ServiceLocator locator,
+                                           PrincipalClassProvider<T> principalClass) {
         super(mpep, locator, Parameter.Source.UNKNOWN);
         this.principalClass = principalClass.clazz;
         this.cl = principalClass;
@@ -32,7 +32,7 @@ public class AuthValueFactoryProvider<T> extends AbstractValueFactoryProvider {
 
     @Override
     protected Factory<?> createValueFactory(Parameter parameter) {
-        if (!parameter.isAnnotationPresent(Auth.class)) {
+        if (!parameter.isAnnotationPresent(Current.class)) {
             return null;
         } else if (principalClass.equals(parameter.getRawType())) {
             return new PrincipalContainerRequestValueFactory<>(cl);
@@ -58,9 +58,9 @@ public class AuthValueFactoryProvider<T> extends AbstractValueFactoryProvider {
     }
 
     @Singleton
-    private static class AuthInjectionResolver extends ParamInjectionResolver {
-        public AuthInjectionResolver() {
-            super(AuthValueFactoryProvider.class);
+    private static class CurrentInjectionResolver extends ParamInjectionResolver {
+        public CurrentInjectionResolver() {
+            super(IdentityValueFactoryProvider.class);
         }
     }
 
@@ -74,9 +74,9 @@ public class AuthValueFactoryProvider<T> extends AbstractValueFactoryProvider {
         @Override
         protected void configure() {
             bind(new PrincipalClassProvider<>(principalClass)).to(PrincipalClassProvider.class);
-            bind(AuthValueFactoryProvider.class).to(ValueFactoryProvider.class).in(Singleton.class);
-            bind(AuthInjectionResolver.class)
-                    .to(new TypeLiteral<InjectionResolver<Auth>>() {
+            bind(IdentityValueFactoryProvider.class).to(ValueFactoryProvider.class).in(Singleton.class);
+            bind(CurrentInjectionResolver.class)
+                    .to(new TypeLiteral<InjectionResolver<Current>>() {
                     })
                     .in(Singleton.class);
         }

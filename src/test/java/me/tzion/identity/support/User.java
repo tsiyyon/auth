@@ -1,4 +1,4 @@
-package me.tzion.auth.support;
+package me.tzion.identity.support;
 
 public class User {
     private String name;

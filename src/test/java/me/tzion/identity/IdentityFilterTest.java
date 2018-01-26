@@ -1,7 +1,7 @@
-package me.tzion.auth;
+package me.tzion.identity;
 
-import me.tzion.auth.support.Resources;
-import me.tzion.auth.support.User;
+import me.tzion.identity.support.Resources;
+import me.tzion.identity.support.User;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.filter.LoggingFilter;
 import org.glassfish.jersey.server.ResourceConfig;
@@ -9,7 +9,6 @@ import org.glassfish.jersey.server.ServerProperties;
 import org.glassfish.jersey.test.JerseyTest;
 import org.junit.Test;
 
-import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
@@ -19,28 +18,25 @@ import java.util.Optional;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
-public class AuthenticationFilterTest extends JerseyTest {
+public class IdentityFilterTest extends JerseyTest {
     @Override
     protected Application configure() {
         ResourceConfig resourceConfig = new ResourceConfig();
         resourceConfig.register(Resources.class);
         resourceConfig.property(ServerProperties.RESPONSE_SET_STATUS_OVER_SEND_ERROR, false);
-        resourceConfig.register(new AuthFeature(
-                new AuthenticationFilter(
-                        new Credentials<String>() {
-                    @Override
-                    public Optional<String> from(ContainerRequestContext context) {
-                        return Optional.ofNullable(context.getHeaderString(HttpHeaders.AUTHORIZATION));
-                    }
-                }, (Authenticator<String, User>) credential -> {
-                    if (Objects.equals(credential, "token_for_kayla")) {
-                        return Optional.of(new User("kayla"));
-                    }
-                    return Optional.empty();
-                }, (context) -> Response.status(401).build()
+        resourceConfig.register(new IdentityFeature(
+                new IdentityFilter(
+                        context -> Optional.ofNullable(context.getHeaderString(HttpHeaders.AUTHORIZATION)),
+                        identifiable -> {
+                            if (Objects.equals(identifiable, "token_for_kayla")) {
+                                return Optional.of(new User("kayla"));
+                            }
+                            return Optional.empty();
+                        },
+                        (context) -> Response.status(401).build()
                 )));
 
-        resourceConfig.register(new AuthValueFactoryProvider.Binder<>(User.class));
+        resourceConfig.register(new IdentityValueFactoryProvider.Binder<>(User.class));
         return resourceConfig;
     }
 

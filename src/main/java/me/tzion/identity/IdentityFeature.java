@@ -1,4 +1,4 @@
-package me.tzion.auth;
+package me.tzion.identity;
 
 import org.glassfish.jersey.server.model.AnnotatedMethod;
 
@@ -11,10 +11,10 @@ import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.util.Optional;
 
-public class AuthFeature implements DynamicFeature {
-    private final AuthenticationFilter authenticationFilter;
-    public AuthFeature(AuthenticationFilter authenticationFilter) {
-        this.authenticationFilter = authenticationFilter;
+public class IdentityFeature implements DynamicFeature {
+    private final IdentityFilter identityFilter;
+    public IdentityFeature(IdentityFilter identityFilter) {
+        this.identityFilter = identityFilter;
     }
 
     @Override
@@ -25,14 +25,14 @@ public class AuthFeature implements DynamicFeature {
 
         for (int i=0; i< parameterAnnotations.length; i++) {
             for (Annotation a : parameterAnnotations[i]) {
-                if (a instanceof Auth) {
+                if (a instanceof Current) {
                     Class<?> parameterType = parameterTypes[i];
                     // Optional need concrete class, because we need handle user not authorized as Optional.empty
                     if (parameterType.equals(Optional.class)) {
-                        context.register(new ExceptionableFilter(authenticationFilter));
+                        context.register(new ExceptionableFilter(identityFilter));
                         return;
                     } else {
-                        context.register(authenticationFilter);
+                        context.register(identityFilter);
                         return;
                     }
                 }
@@ -41,16 +41,16 @@ public class AuthFeature implements DynamicFeature {
     }
 
     class ExceptionableFilter implements ContainerRequestFilter {
-        private AuthenticationFilter authenticationFilter;
+        private IdentityFilter identityFilter;
 
-        public ExceptionableFilter(AuthenticationFilter authenticationFilter) {
-            this.authenticationFilter = authenticationFilter;
+        public ExceptionableFilter(IdentityFilter identityFilter) {
+            this.identityFilter = identityFilter;
         }
 
         @Override
         public void filter(ContainerRequestContext requestContext) throws IOException {
             try {
-                authenticationFilter.filter(requestContext);
+                identityFilter.filter(requestContext);
             } catch (Exception ignored) {
                 // ignore
             }

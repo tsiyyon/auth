@@ -6,7 +6,7 @@ plugins {
 }
 
 group = 'me.tzion'
-archivesBaseName = "auth"
+archivesBaseName = "identity"
 version = '0.0.1'
 
 ext {
@@ -67,15 +67,14 @@ uploadArchives {
             beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
             repository(url: mavenCentral().url)
             pom.project {
-                name 'auth'
+                name 'identity'
                 packaging 'jar'
-                description 'A application used as an example on how to set up pushing its components to the Central Repository.'
-                url 'http://www.example.com/example-application'
+                description 'The jersey identity module'
 
                 scm {
-                    connection 'https://github.com/tsiyyon'
-                    developerConnection 'https://github.com/tsiyyon'
-                    url 'https://github.com/tsiyyon'
+                    connection 'scm:git:git://github.com/tsiyyon/identity.git'
+                    developerConnection 'scm:git:git://github.com/tsiyyon/identity.git'
+                    url 'https://github.com/tsiyyon/identity'
                 }
 
                 licenses {
