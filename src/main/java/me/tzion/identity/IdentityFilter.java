@@ -4,15 +4,14 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.core.Response;
-import java.io.IOException;
 import java.util.Optional;
 
-public class IdentityFilter<C, P> implements ContainerRequestFilter {
-    private Identifiable<C> identifiable;
+public class IdentityFilter<Identifiable, Identity> implements ContainerRequestFilter {
+    private me.tzion.identity.Identifiable<Identifiable> identifiable;
     private Unauthorized unauthorized;
-    private Identities<C, P> identities;
+    private Identities<Identifiable, Identity> identities;
 
-    public IdentityFilter(Identifiable<C> identifiable, Identities<C, P> identities, Unauthorized unauthorized) {
+    public IdentityFilter(me.tzion.identity.Identifiable<Identifiable> identifiable, Identities<Identifiable, Identity> identities, Unauthorized unauthorized) {
         this.unauthorized = unauthorized;
         this.identities = identities;
         this.identifiable = identifiable;
@@ -20,8 +19,8 @@ public class IdentityFilter<C, P> implements ContainerRequestFilter {
 
 
     @Override
-    public void filter(ContainerRequestContext requestContext) throws IOException {
-        Optional<C> identifiable = this.identifiable.from(requestContext);
+    public void filter(ContainerRequestContext requestContext) {
+        Optional<Identifiable> identifiable = this.identifiable.from(requestContext);
         if (!identifiable.isPresent()) {
             throw new WebApplicationException(unauthorized.handle(requestContext));
         }
@@ -31,8 +30,8 @@ public class IdentityFilter<C, P> implements ContainerRequestFilter {
         }
     }
 
-    private boolean identified(ContainerRequestContext requestContext, C identifiable) {
-        Optional<P> identity = identities.identify(identifiable);
+    private boolean identified(ContainerRequestContext requestContext, Identifiable identifiable) {
+        Optional<Identity> identity = identities.identify(identifiable);
         if (!identity.isPresent()) {
             return false;
         }
