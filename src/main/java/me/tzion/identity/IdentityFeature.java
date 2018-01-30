@@ -7,7 +7,6 @@ import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.container.DynamicFeature;
 import javax.ws.rs.container.ResourceInfo;
 import javax.ws.rs.core.FeatureContext;
-import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.util.Optional;
 
@@ -48,7 +47,7 @@ public class IdentityFeature implements DynamicFeature {
         }
 
         @Override
-        public void filter(ContainerRequestContext requestContext) throws IOException {
+        public void filter(ContainerRequestContext requestContext) {
             try {
                 identityFilter.filter(requestContext);
             } catch (Exception ignored) {
