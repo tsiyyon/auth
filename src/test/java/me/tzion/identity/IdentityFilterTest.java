@@ -2,13 +2,14 @@ package me.tzion.identity;
 
 import me.tzion.identity.support.Resources;
 import me.tzion.identity.support.User;
+import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.client.ClientConfig;
-import org.glassfish.jersey.filter.LoggingFilter;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.server.ServerProperties;
 import org.glassfish.jersey.test.JerseyTest;
 import org.junit.Test;
 
+import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
@@ -26,23 +27,31 @@ public class IdentityFilterTest extends JerseyTest {
         resourceConfig.property(ServerProperties.RESPONSE_SET_STATUS_OVER_SEND_ERROR, false);
         resourceConfig.register(new IdentityFeature(
                 new IdentityFilter(
-                        context -> Optional.ofNullable(context.getHeaderString(HttpHeaders.AUTHORIZATION)),
-                        identifiable -> {
-                            if (Objects.equals(identifiable, "token_for_kayla")) {
-                                return Optional.of(new User("kayla"));
+                        new Identifiable<String>() {
+                            @Override
+                            public Optional from(ContainerRequestContext context) {
+                                return Optional.ofNullable(context.getHeaderString(HttpHeaders.AUTHORIZATION));
                             }
-                            return Optional.empty();
+                        },
+                        new Identities<String, User>() {
+                            @Override
+                            public Optional<User> identify(String identifiable) {
+                                if (Objects.equals(identifiable, "token_for_kayla")) {
+                                    return Optional.of(new User("kayla"));
+                                }
+                                return Optional.empty();
+                            }
+
                         },
                         (context) -> Response.status(401).build()
                 )));
-
-        resourceConfig.register(new IdentityValueFactoryProvider.Binder<>(User.class));
+        resourceConfig.packages("me.tzion.identity");
+        resourceConfig.register(new Binder<>(User.class));
         return resourceConfig;
     }
 
     @Override
     protected void configureClient(ClientConfig config) {
-        config.register(new LoggingFilter());
         super.configureClient(config);
     }
 
